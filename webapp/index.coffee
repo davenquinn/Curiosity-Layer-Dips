@@ -1,3 +1,12 @@
-console.log "Hello world"
+import attitudes from './attitudes.json'
+import {createUI} from 'attitude/ui-src'
 
-document.body.style.backgroundColor = 'violet'
+div = document.createElement("div")
+document.body.append(div)
+
+
+planes = [attitudes...]
+for plane in planes
+  plane.color = "rgba(100,100,100,.01)"
+
+createUI(div, planes)

@@ -10,6 +10,13 @@
   },
   "author": "Daven Quinn",
   "license": "ISC",
+  "dependencies": {
+    "attitude": "file:./Attitude/js-frontend",
+    "autoprefixer": "^9.6.1",
+    "postcss": "^7.0.17",
+    "postcss-modules": "^1.4.1",
+    "react": "^16.8.6"
+  },
   "devDependencies": {
     "coffeescript": "^2.4.1"
   }
