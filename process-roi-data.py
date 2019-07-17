@@ -5,6 +5,7 @@ from click import secho
 from pandas import read_parquet
 from os import environ
 import numpy as N
+from json import dump
 
 #from matplotlib import use
 #environ['ITERMPLOT'] = ''
@@ -29,6 +30,8 @@ def err_desc(series):
     rng = mx-mn
     return f"mean {mn:5.3f}, max {mx:5.3f} m"
 
+
+mappings = []
 for key, roi in df.groupby(level=0):
     secho(key, bold=True)
     for col in 'x y z'.split():
@@ -69,4 +72,9 @@ for key, roi in df.groupby(level=0):
     val = Orientation(xyzmc)
     fig = plot_aligned(val)
     fig.savefig(f"plots/{key}_monte_carlo.pdf", bbox_inches='tight')
+
+    mappings.append(val.to_mapping())
+
+with open("webapp/attitudes.json", 'w') as f:
+    dump(mappings, f)
 
