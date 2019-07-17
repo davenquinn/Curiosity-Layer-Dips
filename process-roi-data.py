@@ -6,7 +6,7 @@ from pandas import read_parquet
 from os import environ
 import numpy as N
 from json import dump
-
+from matplotlib.pyplot import figure
 #from matplotlib import use
 #environ['ITERMPLOT'] = ''
 #use('module://itermplot')
@@ -74,6 +74,21 @@ for key, roi in df.groupby(level=0):
     fig.savefig(f"plots/{key}_monte_carlo.pdf", bbox_inches='tight')
 
     mappings.append(val.to_mapping())
+
+    ### Monte carlo through entire fitting process
+    a = []
+    for i in range(1000):
+        fuzz = N.random.randn(*xyz.shape)
+        xyzmc = xyz+xye*fuzz
+        o = Orientation(xyzmc)
+        a.append(o.strike_dip())
+
+    arr = N.array(a).transpose()
+
+    fig = figure()
+    ax = fig.add_subplot(111, projection='polar')
+    ax.scatter(arr[0]+90, arr[1])
+    fig.savefig(f"plots/{key}_polar_mc.pdf", bbox_inches='tight')
 
 with open("webapp/attitudes.json", 'w') as f:
     dump(mappings, f)
