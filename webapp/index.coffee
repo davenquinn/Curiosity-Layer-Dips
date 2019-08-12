@@ -1,4 +1,4 @@
-import attitudes from './attitudes-new.json'
+import attitudes from './575047622-attitudes.json'
 import {createUI} from 'attitude/ui-src'
 
 div = document.createElement("div")
