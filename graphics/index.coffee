@@ -1,6 +1,6 @@
 import h from 'react-hyperscript'
 # Need some sort of CSS or else we get an error in bundler
-import data from './attitude-data.json'
+import attitudes from './attitude-data.json'
 import Promise from 'bluebird'
 import chroma from 'chroma-js'
 import * as d3 from 'd3'
@@ -10,10 +10,11 @@ import {Stereonet} from '../webapp/Attitude/js-frontend/lib/attitude.js'
 import {nest} from 'd3-collection'
 import {Component} from 'react'
 import {findDOMNode} from 'react-dom'
+import './main.styl'
 
 class StereonetComponent extends Component
   render: ->
-    h 'svg.stereonet', {width: 400, height: 400}
+    h 'svg.stereonet', {width: 340, height: 340}
 
   componentDidMount: ->
     {data} = @props
@@ -56,7 +57,6 @@ class StereonetComponent extends Component
       .attr 'fill', (d)->
         {area} = d.properties
         opacity = (2-area)*(2-area)/60
-        console.log opacity
         "rgba(80,80,80,#{opacity})"
       .attr 'stroke', 'rgba(80,80,80,0.4)'
 
@@ -65,14 +65,13 @@ fn = =>
 
   groupedData = nest()
     .key (d)->d.sol
-    .entries data
+    .entries attitudes
 
-  h 'div', groupedData.map (data)->
-    {key, values} = data
-    h 'div', [
+  h 'div.plots', groupedData.map (d)->
+    {key, values} = d
+    h 'div.sol-plot', [
       h 'h2.sol', "Sol #{key}"
       h StereonetComponent, {data: values}
-
     ]
 
 module.exports = fn
