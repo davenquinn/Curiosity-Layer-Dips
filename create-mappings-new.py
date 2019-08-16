@@ -23,5 +23,5 @@ def make_mapping(row):
 
 collection = [make_mapping(row) for i, row in df.iterrows()]
 
-with open("webapp/attitudes-new.json", 'w') as f:
+with open("graphics/attitude-data.json", 'w') as f:
     dump(collection, f)
