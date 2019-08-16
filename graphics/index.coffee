@@ -44,13 +44,21 @@ class StereonetComponent extends Component
 
     svg.select '.graticule'
       .attr 'fill', 'transparent'
-      .attr 'stroke-width', '2px'
+      .attr 'stroke-width', '1px'
       .attr 'stroke', '#aaa'
-
+      .attr 'stroke-dasharray', '2,2'
 
     stereonet.ellipses data
-    #.each setStyle
+
     stereonet.draw()
+
+    svg.selectAll '.poles .normal .error'
+      .attr 'fill', (d)->
+        {area} = d.properties
+        opacity = (2-area)*(2-area)/60
+        console.log opacity
+        "rgba(80,80,80,#{opacity})"
+      .attr 'stroke', 'rgba(80,80,80,0.4)'
 
 
 fn = =>
