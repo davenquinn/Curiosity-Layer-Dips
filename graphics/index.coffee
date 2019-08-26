@@ -11,6 +11,7 @@ import {nest} from 'd3-collection'
 import {Component} from 'react'
 import {findDOMNode} from 'react-dom'
 import './main.styl'
+import {AzimuthLabels, DipLabels} from './graticule-labels'
 
 class StereonetComponent extends Component
   render: ->
@@ -18,6 +19,12 @@ class StereonetComponent extends Component
 
   componentDidMount: ->
     {data} = @props
+
+    data = data.filter (d)->
+      v = d.ratio_1 > 5 and d.ratio_2 > 5
+      console.log d, v
+      v
+
     el = findDOMNode(@)
     innerSize = {
       height: 300
@@ -49,17 +56,24 @@ class StereonetComponent extends Component
       .attr 'stroke', '#aaa'
       .attr 'stroke-dasharray', '2,2'
 
-    stereonet.ellipses data
+    ell = stereonet.ellipses data
 
     stereonet.draw()
 
-    svg.selectAll '.poles .normal .error'
-      .attr 'fill', (d)->
-        {area} = d.properties
-        opacity = (2-area)*(2-area)/60
-        "rgba(80,80,80,#{opacity})"
-      .attr 'stroke', 'rgba(80,80,80,0.4)'
-
+    ell.each (d)->
+      el = d3.select(@).select('.error')
+      fill = 'transparent'
+      #if d.min_angular_error < 10
+      opacity = 1/d.min_angular_error/d.min_angular_error
+      if opacity > 0.2
+        opacity = 0.2
+      if opacity < 0.05
+        opacity = 0.05
+      console.log opacity
+      fill = "rgba(80,80,80,#{opacity})"
+      #else
+      #  el.attr 'stroke-dasharray', '4,2'
+      el.attr 'fill', fill
 
 fn = =>
 

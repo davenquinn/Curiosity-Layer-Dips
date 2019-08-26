@@ -19,7 +19,9 @@ def make_mapping(row):
             sol=row['Sol'],
             id=row['ID'],
             n=row['n'],
-            L=row['L'])
+            L=row['L'],
+            ratio_1=row['First PC Ratio'],
+            ratio_2=row['Second PC Ratio'])
 
 collection = [make_mapping(row) for i, row in df.iterrows()]
 
