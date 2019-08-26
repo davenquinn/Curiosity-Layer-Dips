@@ -1,2 +1,4 @@
 build
 plots
+node_modules
+.cache
