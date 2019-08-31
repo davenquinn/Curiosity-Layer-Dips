@@ -21,8 +21,8 @@ def make_mapping(row):
             id=row['ID'],
             n=row['n'],
             L=row['L'],
-            ratio_1=row['First PC Ratio'],
-            ratio_2=row['Second PC Ratio'])
+            ratio_1=row['First PC delta']/row['First PC delta_e'],
+            ratio_2=row['Second PC delta']/row['Second PC delta_e'])
 
 data = {
     '1s': 'all_PCA_dips_montecarlo_BP_singlerun_one_std_w_errors',
