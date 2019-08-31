@@ -1,12 +1,12 @@
 import h from 'react-hyperscript'
 # Need some sort of CSS or else we get an error in bundler
-import attitudes from './attitude-data.json'
+import attitudes from './mappings/attitudes-1s.json'
 import Promise from 'bluebird'
 import chroma from 'chroma-js'
 import * as d3 from 'd3'
 require 'd3-selection-multi'
 import 'd3-jetpack'
-import {Stereonet} from '../webapp/Attitude/js-frontend/lib/attitude.js'
+import {Stereonet} from '../deps/Attitude/js-frontend/lib/attitude.js'
 import {nest} from 'd3-collection'
 import {Component} from 'react'
 import {findDOMNode} from 'react-dom'
@@ -76,7 +76,6 @@ class StereonetComponent extends Component
       el.attr 'fill', fill
 
 fn = =>
-
   groupedData = nest()
     .key (d)->d.sol
     .entries attitudes
@@ -88,4 +87,4 @@ fn = =>
       h StereonetComponent, {data: values}
     ]
 
-module.exports = fn
+module.exports = h(fn)
