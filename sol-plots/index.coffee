@@ -1,6 +1,5 @@
 import h from 'react-hyperscript'
 # Need some sort of CSS or else we get an error in bundler
-import attitudes from './mappings/attitudes-1s.json'
 import Promise from 'bluebird'
 import chroma from 'chroma-js'
 import * as d3 from 'd3'
@@ -9,21 +8,25 @@ import 'd3-jetpack'
 import {Stereonet} from '../deps/Attitude/js-frontend/lib/attitude.js'
 import {nest} from 'd3-collection'
 import {Component} from 'react'
-import {findDOMNode} from 'react-dom'
+import {findDOMNode, render} from 'react-dom'
+import {readFileSync} from 'fs'
 import './main.styl'
 import {AzimuthLabels, DipLabels} from './graticule-labels'
 
 class StereonetComponent extends Component
+  @defaultProps: {
+    filterData: false
+  }
   render: ->
     h 'svg.stereonet', {width: 340, height: 340}
 
   componentDidMount: ->
-    {data} = @props
+    {data, stackedData, filterData} = @props
 
-    data = data.filter (d)->
-      v = d.ratio_1 > 5 and d.ratio_2 > 5
-      console.log d, v
-      v
+    if filterData
+      data = data.filter (d)->
+        v = d.ratio_1 > 3 and d.ratio_2 > 3
+        v
 
     el = findDOMNode(@)
     innerSize = {
@@ -56,6 +59,9 @@ class StereonetComponent extends Component
       .attr 'stroke', '#aaa'
       .attr 'stroke-dasharray', '2,2'
 
+    ell2 = null
+    if stackedData?
+      ell2 = stereonet.ellipses stackedData
     ell = stereonet.ellipses data
 
     stereonet.draw()
@@ -75,16 +81,55 @@ class StereonetComponent extends Component
       #  el.attr 'stroke-dasharray', '4,2'
       el.attr 'fill', fill
 
-fn = =>
-  groupedData = nest()
+    return unless ell2?
+
+    ell2.each (d)->
+      el = d3.select(@).select('.error')
+      fill = 'transparent'
+      #if d.min_angular_error < 10
+      opacity = 1/d.min_angular_error/d.min_angular_error
+      if opacity > 0.2
+        opacity = 0.2
+      if opacity < 0.05
+        opacity = 0.05
+      fill = "rgba(255,10,10,0.5)"
+      #else
+      #  el.attr 'stroke-dasharray', '4,2'
+      el.attr 'fill', fill
+
+getData = (fn)->
+  filename = require.resolve(fn)
+  attitudes = JSON.parse(readFileSync(filename))
+  return nest()
     .key (d)->d.sol
     .entries attitudes
 
-  h 'div.plots', groupedData.map (d)->
+fn = (opts={})->
+  {type, stacked} = opts
+  type ?= '1s'
+  stacked ?= false
+
+  filterData = true
+  if stacked
+    filterData = false
+
+  mainData = getData("./mappings/attitudes-#{type}.json")
+  stackedData = null
+  if stacked
+    stackedData = getData("./mappings/attitudes-#{type}-stacked.json")
+
+  h 'div.plots', mainData.map (d)->
     {key, values} = d
+
+    if stackedData?
+      sv = stackedData.find (d)->d.key == key
+      if sv?
+        sv = sv.values
+
+    #stackedData =
     h 'div.sol-plot', [
       h 'h2.sol', "Sol #{key}"
-      h StereonetComponent, {data: values}
+      h StereonetComponent, {data: values, stackedData: sv, filterData}
     ]
 
-module.exports = h(fn)
+export default fn

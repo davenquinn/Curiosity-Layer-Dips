@@ -4,9 +4,15 @@ from sys import argv
 from os import path
 from pandas import read_excel
 from json import dump
+from numpy import isnan
 from attitude.orientation.reconstructed import ReconstructedPlane
 
 outdir = argv[1]
+
+def guard_nan(value):
+    if isnan(value):
+        return 0
+    return value
 
 def make_mapping(row):
     strike = row['Dip Direction']-90
@@ -21,8 +27,8 @@ def make_mapping(row):
             id=row['ID'],
             n=row['n'],
             L=row['L'],
-            ratio_1=row['First PC delta']/row['First PC delta_e'],
-            ratio_2=row['Second PC delta']/row['Second PC delta_e'])
+            ratio_1=guard_nan(row['First PC delta']/row['First PC delta_e']),
+            ratio_2=guard_nan(row['Second PC delta']/row['Second PC delta_e']))
 
 data = {
     '1s': 'all_PCA_dips_montecarlo_BP_singlerun_one_std_w_errors',

@@ -1,2 +1,0 @@
-#!/bin/bash
-deps/pdf-printer/bin/cli.js sol-plots/index.coffee sol-plots/graphic.pdf

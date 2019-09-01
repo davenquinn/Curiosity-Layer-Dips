@@ -10,4 +10,4 @@ mappings: sol-plots/mappings
 	./create-mappings.py $^
 
 graphics: mappings
-	./create-graphics
+	./deps/pdf-printer/bin/cli.js --spec-mode spec.js
