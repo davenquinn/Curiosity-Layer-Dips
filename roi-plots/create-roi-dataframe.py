@@ -21,7 +21,7 @@ def read_roi(fn, names):
 
 def get_data(ix):
     key = str(ix)+"_MR"
-    prefix = "from_nathan/"+key
+    prefix = "roi-plots/data/"+key
     xyz = read_roi(prefix+"_xyz.txt",
             "ID X Y x y z".split())
     xye = read_roi(prefix+"_xye.txt",
@@ -38,5 +38,6 @@ for ix in [2980, 6826]:
 # Create a single data frame for all point clouds
 df = concat(point_clouds)
 
+# Write this out to an intermediate machine-readable data file so we
+# don't have to recalculate the Monte Carlo model every time.
 df.to_parquet(argv[1])
-
