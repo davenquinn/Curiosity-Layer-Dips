@@ -6,15 +6,16 @@ from shapely.geometry import shape
 from shapely.ops import transform
 import numpy as N
 from json import dump
+from sys import argv
 
 from attitude import Orientation, plot_aligned
 from attitude.helpers.dem import extract_shape
 
 file_key = '575047622'
-XYZFILE=f"from_nathan/2000/MLG_{file_key}XYZ_S0682626MCAM10489M1.img"
+XYZFILE=f"traces/sol_2000_images/MLG_{file_key}XYZ_S0682626MCAM10489M1.img"
 # Features were digitized off from_nathan/2000/MLF_575047622ILT_S0682626MCAM10489M1.img
-LINES=f"traces/MLF_{file_key}-lines.geojson"
-POLYS=f"traces/MLF_{file_key}-polygons.geojson"
+LINES=f"traces/digitized-traces/MLF_{file_key}-lines.geojson"
+POLYS=f"traces/digitized-traces/MLF_{file_key}-polygons.geojson"
 
 features = []
 mappings = []
@@ -70,10 +71,9 @@ for i, xyz in enumerate(features):
     xyz_ = reject_outliers(xyz)
     val = Orientation(xyz_)
     fig = plot_aligned(val)
-    fig.savefig(f"plots/{file_key}_{i}.pdf", bbox_inches='tight')
+    fig.savefig(f"output/{file_key}_{i}.pdf", bbox_inches='tight')
     mappings.append(val.to_mapping())
 
-import IPython; IPython.embed(); raise
-
-with open(f"webapp/{file_key}-attitudes.json", 'w') as f:
+folder = argv[1]
+with open(f"{folder}/{file_key}-attitudes.json", 'w') as f:
     dump(mappings, f)
