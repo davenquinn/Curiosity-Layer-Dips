@@ -6,6 +6,7 @@ from pandas import read_parquet
 from os import environ
 import numpy as N
 from json import dump
+import re
 from matplotlib.pyplot import figure
 #from matplotlib import use
 #environ['ITERMPLOT'] = ''
@@ -13,10 +14,12 @@ from matplotlib.pyplot import figure
 #from matplotlib.pyplot import style
 #style.use('dark_background')
 
+
 from attitude.orientation import Orientation
 from attitude.display import plot_aligned
 
 df = read_parquet(argv[1])
+outdir = argv[2]
 
 def range_desc(series):
     mn = series.min()
@@ -38,14 +41,15 @@ for key, roi in df.groupby(level=0):
         print(col+" "+range_desc(roi[col]))
     for col in 'xe ye ze'.split():
         print(col+" "+err_desc(roi[col]))
-    print("")
+
+    image = int(re.findall("^\d+", key)[0])
 
     xyz = roi.loc[:,["x","y","z"]].values
 
     # Basic
     val = Orientation(xyz)
     fig = plot_aligned(val)
-    fig.savefig(f"plots/{key}_basic.pdf", bbox_inches='tight')
+    fig.savefig(f"{outdir}/{key}_basic.pdf", bbox_inches='tight')
 
 
     xye = roi.loc[:,["xe","ye","ze"]]
@@ -53,12 +57,11 @@ for key, roi in df.groupby(level=0):
     norm_err = xym/xym.min()
 
     weights = 1/norm_err
-    print(xye, weights)
 
     # Weighted
     val = Orientation(xyz, weights=weights.values)
     fig = plot_aligned(val)
-    fig.savefig(f"plots/{key}_weighted.pdf", bbox_inches='tight')
+    fig.savefig(f"{outdir}/{key}_weighted.pdf", bbox_inches='tight')
 
     # Monte Carlo
     # Monte Carlo with 1000 replicates of each point
@@ -71,9 +74,9 @@ for key, roi in df.groupby(level=0):
 
     val = Orientation(xyzmc)
     fig = plot_aligned(val)
-    fig.savefig(f"plots/{key}_monte_carlo.pdf", bbox_inches='tight')
+    fig.savefig(f"{outdir}/{key}_monte_carlo.pdf", bbox_inches='tight')
 
-    mappings.append(val.to_mapping())
+    mappings.append(val.to_mapping(key=image))
 
     ### Monte carlo through entire fitting process
     a = []
@@ -88,8 +91,7 @@ for key, roi in df.groupby(level=0):
     fig = figure()
     ax = fig.add_subplot(111, projection='polar')
     ax.scatter(arr[0]+90, arr[1])
-    fig.savefig(f"plots/{key}_polar_mc.pdf", bbox_inches='tight')
+    fig.savefig(f"{outdir}/{key}_polar_mc.pdf", bbox_inches='tight')
 
-with open("webapp/attitudes.json", 'w') as f:
+with open(f"{outdir}/attitudes.json", 'w') as f:
     dump(mappings, f)
-

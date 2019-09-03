@@ -7,6 +7,7 @@ all: install graphics
 
 sol-plots/mappings:
 traces/mappings:
+output/roi-plots:
 	mkdir -p $@
 
 install:
@@ -22,7 +23,7 @@ $(roi): roi-plots/create-roi-dataframe.py
 	mkdir -p $(dir $@)
 	./$^ $@
 
-roi_plots: roi-plots/process-roi-data.py $(roi)
+roi_plots: roi-plots/process-roi-data.py $(roi) output/roi-plots
 	./$^
 
 graphics: mappings traces roi_plots
