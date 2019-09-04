@@ -1,4 +1,4 @@
-build
-plots
 node_modules
 .cache
+sol-plots/mappings
+output

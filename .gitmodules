@@ -1,5 +1,5 @@
 [submodule "Attitude"]
-	path = webapp/Attitude
+	path = deps/Attitude
 	url = git://github.com/davenquinn/Attitude.git
 [submodule "deps/subdivide"]
 	path = deps/subdivide

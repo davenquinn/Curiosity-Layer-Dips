@@ -1,2 +1,0 @@
-#!/bin/bash
-deps/pdf-printer/bin/cli.js graphics/index.coffee plots/graphic.pdf

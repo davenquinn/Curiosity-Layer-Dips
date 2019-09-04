@@ -1,17 +1,30 @@
-roi=build/roi-data.parquet
+roi=roi-plots/.cache/roi-data.parquet
 
-.PHONY: install process
+all: install graphics
 
-all: process
+# Don't ask me why `make` is so dumb
+.PHONY: mappings traces graphics
 
-plots build:
-	mkdir $@
+sol-plots/mappings:
+traces/mappings:
+output/roi-plots:
+	mkdir -p $@
 
-$(roi): create-roi-dataframe.py | build plots
+install:
+	pip install -e deps/Attitude
+
+mappings: sol-plots/mappings
+	./sol-plots/create-mappings.py $^
+
+traces: traces/mappings
+	./traces/extract-shapes.py $^
+
+$(roi): roi-plots/create-roi-dataframe.py
+	mkdir -p $(dir $@)
 	./$^ $@
 
-install: setup-environment.zsh
-	zsh $^
-
-process: process-roi-data.py $(roi)
+roi_plots: roi-plots/process-roi-data.py $(roi) output/roi-plots
 	./$^
+
+graphics: mappings traces roi_plots
+	./deps/pdf-printer/bin/cli.js --spec-mode spec.js
