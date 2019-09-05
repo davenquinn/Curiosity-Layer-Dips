@@ -4,7 +4,9 @@ printer.task('attitudes-1s.pdf', './sol-plots/index.coffee', {stacked: false, ty
 printer.task('attitudes-1s-stacked.pdf', './sol-plots/index.coffee', {stacked: true, type: '1s'});
 printer.task('attitudes-2s.pdf', './sol-plots/index.coffee', {stacked: false, type: '2s'});
 printer.task('attitudes-2s-stacked.pdf', './sol-plots/index.coffee', {stacked: true, type: '2s'});
-printer.task('roi-plots/attitudes-no-errors.pdf', './roi-plots/index.coffee', {type: 'no-errors'});
-printer.task('roi-plots/attitudes-monte-carlo.pdf', './roi-plots/index.coffee', {type: 'monte-carlo'});
+
+for (let type of ['no-errors', 'monte-carlo', 'monte-carlo-rescaled', 'weighted']) {
+  printer.task(`roi-plots/attitudes-${type}.pdf`, './roi-plots/index.coffee', {type});
+}
 
 module.exports = printer
