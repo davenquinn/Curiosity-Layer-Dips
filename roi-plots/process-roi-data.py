@@ -31,7 +31,7 @@ groups = df.groupby(level=['sol', 'image', 'roi'])
 basic = groups.apply(basic_model)
 weighted = groups.apply(weighted_model)
 monte_carlo = groups.apply(monte_carlo_model)
-monte_carlo_rescaled = groups.apply(monte_carlo_model, scale_errors=0.1)
+monte_carlo_rescaled = groups.apply(monte_carlo_model, scale_errors=0.2)
 #params = monte_carlo.apply(get_parameters)
 
 dump_json(basic, f"{outdir}/attitudes-no-errors.json")
