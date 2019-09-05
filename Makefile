@@ -3,7 +3,7 @@ roi=roi-plots/.cache/roi-data.parquet
 all: install graphics
 
 # Don't ask me why `make` is so dumb
-.PHONY: mappings traces graphics
+.PHONY: mappings traces graphics roi_data
 
 sol-plots/mappings:
 traces/mappings:
@@ -22,6 +22,8 @@ traces: traces/mappings
 $(roi): roi-plots/create-roi-dataframe.py
 	mkdir -p $(dir $@)
 	./$^ $@
+
+roi_data: $(roi)
 
 roi_plots: roi-plots/process-roi-data.py $(roi) output/roi-plots
 	./$^
