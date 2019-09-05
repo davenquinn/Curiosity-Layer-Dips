@@ -14,19 +14,21 @@ import './main.styl'
 import StereonetComponent from '../sol-plots/stereonet'
 
 getData = (fn)->
+  console.log fn
   filename = require.resolve(fn)
   attitudes = JSON.parse(readFileSync(filename))
-  console.log attitudes
   return nest()
-    .key (d)->d.key
+    .key (d)->d.sol
     .entries attitudes
 
-module.exports = ->
-  data = getData("../output/roi-plots/attitudes.json")
+module.exports = (props)->
+  {type} = props
+  type ?= 'no-errors'
+  data = getData("../output/roi-plots/attitudes-#{type}.json")
 
   h 'div.plots', data.map (d)->
     {key, values} = d
     h 'div.sol-plot', [
-      h 'h2.sol', "Image #{key}"
+      h 'h2.sol', "Sol #{key}"
       h StereonetComponent, {data: values, filterData: false}
     ]

@@ -34,16 +34,28 @@ def get_params(xyz):
     print(sol_id, image_id)
     return sol_id, image_id
 
+def join_frames(coord_frames, error_frames):
+    for coord, error in zip(coord_frames, error_frames):
+        yield coord.join(error)
+
 def create_dataframe(xyz):
     xye = find_xye(xyz)
     sol_id, image_id = get_params(xyz)
 
     df0 = read_roi(xyz, "ID X Y x y z")
-    df1 = read_roi(xye, "ID X Y xe ye ze")
+    df_c = None
+    try:
+        df1 = read_roi(xye, "ID X Y xe ye ze")
+        df_c = join_frames(df0,df1)
+    except FileNotFoundError as err:
+        secho(str(err), fg='red')
+        df_c = df0
+        for df in df_c:
+            # Set error to a low symmetrical value
+            df['xe'] = df['ye'] = df['ze'] = 0.005
 
-    for i, (coord, error) in enumerate(zip(df0, df1)):
+    for i, df in enumerate(df_c):
         # Iterate through ROIs in this dataframe
-        df = coord.join(error)
         df.reset_index(inplace=True)
 
         df['sol'] = sol_id
@@ -60,17 +72,17 @@ for xyz in xyz_files:
     # Skip stacked data for now
     if xyz.stem.startswith("stacked"):
         continue
-    try:
-        roi_list += list(create_dataframe(xyz))
-    except FileNotFoundError as err:
-        secho(str(err), fg='red')
+    roi_list += list(create_dataframe(xyz))
 
 df = concat(roi_list)
 df.set_index(['sol','image','roi'], inplace=True)
 
+# z is parameterized as DOWN in in the MSL site frame, weirdly
+df.loc[:,"z"] *= -1
+
 # Convert pixel coords to integer for simplicity
 df.loc[:,'X'] = df.loc[:,'X'].astype(int)
-df.loc[:,'Y'] = df.loc[:,'X'].astype(int)
+df.loc[:,'Y'] = df.loc[:,'Y'].astype(int)
 
 # Write this out to an intermediate machine-readable data file so we
 # don't have to parse ROIs every time.
