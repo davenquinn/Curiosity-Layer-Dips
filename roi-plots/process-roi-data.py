@@ -2,18 +2,11 @@
 
 from sys import argv
 from click import secho
-from pandas import read_parquet
+from pandas import read_parquet, DataFrame, Series
 from os import environ
 import numpy as N
 from json import dump
 import re
-from matplotlib.pyplot import figure
-#from matplotlib import use
-#environ['ITERMPLOT'] = ''
-#use('module://itermplot')
-#from matplotlib.pyplot import style
-#style.use('dark_background')
-
 
 from attitude.orientation import Orientation
 from attitude.display import plot_aligned
@@ -33,65 +26,64 @@ def err_desc(series):
     rng = mx-mn
     return f"mean {mn:5.3f}, max {mx:5.3f} m"
 
-
-mappings = []
-for key, roi in df.groupby(level=0):
-    secho(key, bold=True)
-    for col in 'x y z'.split():
-        print(col+" "+range_desc(roi[col]))
-    for col in 'xe ye ze'.split():
-        print(col+" "+err_desc(roi[col]))
-
-    image = int(re.findall("^\d+", key)[0])
-
+def get_values(roi):
     xyz = roi.loc[:,["x","y","z"]].values
+    xye = roi.loc[:,["xe","ye","ze"]].values
+    return xyz, xye
 
-    # Basic
-    val = Orientation(xyz)
-    fig = plot_aligned(val)
-    fig.savefig(f"{outdir}/{key}_basic.pdf", bbox_inches='tight')
+def basic_model(roi):
+    """
+    Orientation model that incorporates data without any accounting for errors.
+    """
+    xyz, xye = get_values(roi)
+    return Orientation(xyz)
 
-
-    xye = roi.loc[:,["xe","ye","ze"]]
+def weighted_model(roi):
+    """
+    Orientation model that applies a uniform error weighting to each axis.
+    """
+    xyz, xye = get_values(roi)
     xym = xye.mean()
+    # Normalize error so the min error is weighted 1
     norm_err = xym/xym.min()
+    return Orientation(xyz, weights=1/norm_err)
 
-    weights = 1/norm_err
-
-    # Weighted
-    val = Orientation(xyz, weights=weights.values)
-    fig = plot_aligned(val)
-    fig.savefig(f"{outdir}/{key}_weighted.pdf", bbox_inches='tight')
-
+def monte_carlo_model(roi, n=1000):
+    xyz,xye = get_values(roi)
     # Monte Carlo
     # Monte Carlo with 1000 replicates of each point
-    xyzmc = N.repeat(xyz, 100, axis=0)
-    xyemc = N.repeat(xye.values, 100, axis=0)
-
+    xyzmc = N.repeat(xyz, n, axis=0)
+    xyemc = N.repeat(xye, n, axis=0)
+    # Random normal distribution
     fuzz = N.random.randn(*xyzmc.shape)
-
+    # Apply the scaled error
     xyzmc += xyemc*fuzz
+    return Orientation(xyzmc)
 
-    val = Orientation(xyzmc)
-    fig = plot_aligned(val)
-    fig.savefig(f"{outdir}/{key}_monte_carlo.pdf", bbox_inches='tight')
+def get_parameters(val):
+    return Series([
+        val.n,
+        *val.strike_dip_rake(),
+        *val.angular_errors()
+    ], index="n strike dip rake min_err max_err".split())
 
-    mappings.append(val.to_mapping(key=image))
+def create_mapping(ix, val):
+    return val.to_mapping(
+        centered_array=None,
+        sol=ix[0],
+        image=ix[1],
+        roi=ix[2])
 
-    ### Monte carlo through entire fitting process
-    a = []
-    for i in range(1000):
-        fuzz = N.random.randn(*xyz.shape)
-        xyzmc = xyz+xye*fuzz
-        o = Orientation(xyzmc)
-        a.append(o.strike_dip())
+def dump_json(frame, filename):
+    with open(filename, 'w') as f:
+        dump([create_mapping(i,v) for i,v in frame.items()], f)
 
-    arr = N.array(a).transpose()
+groups = df.groupby(level=['sol', 'image', 'roi'])
+basic = groups.apply(basic_model)
+#weighted = groups.apply(weighted_model)
+monte_carlo = groups.apply(monte_carlo_model)
+#params = monte_carlo.apply(get_parameters)
 
-    fig = figure()
-    ax = fig.add_subplot(111, projection='polar')
-    ax.scatter(arr[0]+90, arr[1])
-    fig.savefig(f"{outdir}/{key}_polar_mc.pdf", bbox_inches='tight')
-
-with open(f"{outdir}/attitudes.json", 'w') as f:
-    dump(mappings, f)
+dump_json(basic, f"{outdir}/attitudes-no-errors.json")
+#dump_json(weighted, f"{outdir}/attitudes-weighted.json")
+dump_json(monte_carlo, f"{outdir}/attitudes-monte-carlo.json")

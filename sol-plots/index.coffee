@@ -21,8 +21,8 @@ getData = (fn)->
     .key (d)->d.sol
     .entries attitudes
 
-fn = (opts={})->
-  {type, stacked} = opts
+module.exports = (props)->
+  {type, stacked} = props
   type ?= '1s'
   stacked ?= false
 
@@ -48,5 +48,3 @@ fn = (opts={})->
       h 'h2.sol', "Sol #{key}"
       h StereonetComponent, {data: values, stackedData: sv, filterData}
     ]
-
-export default fn
