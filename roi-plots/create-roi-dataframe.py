@@ -2,24 +2,15 @@
 
 # Extract ROIs to pandas data frame
 
-import numpy as N
+import sys
 from click import secho
 from pandas import read_csv, concat
-from sys import argv
 from pathlib import Path
 
-def read_roi(fn, names):
-    df = read_csv(str(fn),
-            delim_whitespace=True,
-            comment=';',
-            skip_blank_lines=False,
-            names=names.split())
-    frames = N.split(df, df[df.isnull().all(1)].index)
-    for df in frames:
-        df.drop(columns=["ID"], inplace=True)
-        df.set_index(["X","Y"], inplace=True)
-        df.dropna(how='all', inplace=True)
-    return frames
+# Add local modules to path
+sys.path.append(str(Path(__file__).parent.parent/'modules'))
+# Local ROI utilities
+from roi_utils import read_roi
 
 def find_xye(xyz):
     new_name = xyz.name.replace("xyz", "xye")
@@ -114,4 +105,4 @@ df = merge_stacks(df)
 
 # Write this out to an intermediate machine-readable data file so we
 # don't have to parse ROIs every time.
-df.to_parquet(argv[1])
+df.to_parquet(sys.argv[1])
