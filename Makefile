@@ -1,9 +1,9 @@
 roi_mappings=output/.date
 
-all: install graphics
+all: graphics
 
 # Don't ask me why `make` is so dumb
-.PHONY: mappings traces graphics roi-plot-data reset
+.PHONY: mappings traces graphics roi-plot-data reset test
 
 sol-plots/mappings:
 traces/mappings:
@@ -29,6 +29,11 @@ $(roi_models): roi-plots/process-roi-data.py $(roi_data)
 	mkdir -p $(dir $@)
 	./$^ $(dir $@)
 	date > $@
+
+output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
+	python $^ $@
+
+test: output/slope-reconstruction.pdf
 
 graphics: $(roi_models)
 	./deps/pdf-printer/bin/cli.js --spec-mode spec.js

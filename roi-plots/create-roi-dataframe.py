@@ -10,7 +10,7 @@ from pathlib import Path
 # Add local modules to path
 sys.path.append(str(Path(__file__).parent.parent/'modules'))
 # Local ROI utilities
-from roi_utils import read_roi
+from roi_utils import import_stereo_roi
 
 def find_xye(xyz):
     new_name = xyz.name.replace("xyz", "xye")
@@ -26,29 +26,13 @@ def get_params(xyz, stack=None):
     print(sol_id, image_id)
     return sol_id, image_id
 
-def join_frames(coord_frames, error_frames):
-    for coord, error in zip(coord_frames, error_frames):
-        yield coord.join(error)
-
-def create_dataframe(xyz, stack=None, default_error=0.005):
+def create_dataframe(xyz, stack=None, **kwargs):
     xye = find_xye(xyz)
     sol_id, image_id = get_params(xyz, stack=stack)
 
-    df0 = read_roi(xyz, "ID X Y x y z")
-    df_c = None
+    res = enumerate(import_stereo_roi(xyz, xye, **kwargs))
 
-    # Get errors if they exist
-    try:
-        df1 = read_roi(xye, "ID X Y xe ye ze")
-        df_c = join_frames(df0,df1)
-    except FileNotFoundError as err:
-        secho(str(err), fg='red')
-        df_c = df0
-        for df in df_c:
-            # Set error to a low symmetrical value
-            df['xe'] = df['ye'] = df['ze'] = default_error
-
-    for i, df in enumerate(df_c):
+    for i, df in res:
         # Iterate through ROIs in this dataframe
         df.reset_index(inplace=True)
 
