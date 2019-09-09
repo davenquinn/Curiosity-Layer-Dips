@@ -10,9 +10,14 @@ def read_roi(fn, names):
             names=names.split())
     frames = split(df, df[df.isnull().all(1)].index)
     for df in frames:
+        # Convert pixel coords to integer for simplicity
+        df.loc[:,'X'] = df.loc[:,'X'].astype(int)
+        df.loc[:,'Y'] = df.loc[:,'Y'].astype(int)
+
         df.drop(columns=["ID"], inplace=True)
         df.set_index(["X","Y"], inplace=True)
         df.dropna(how='all', inplace=True)
+
     return frames
 
 def import_stereo_roi(xyz_path, xye_path=None, default_error=0.005):

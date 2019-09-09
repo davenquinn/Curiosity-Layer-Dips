@@ -4,7 +4,7 @@
 
 import sys
 from click import secho
-from pandas import read_csv, concat
+from pandas import concat
 from pathlib import Path
 
 # Add local modules to path
@@ -76,13 +76,6 @@ data_dir = Path(__file__).parent/"data"
 xyz_files = data_dir.glob("**/*_xyz.txt")
 df = concat([f for f in roi_stream(xyz_files)])
 df.set_index(['sol','image','roi'], inplace=True)
-
-# z is parameterized as DOWN in in the MSL site frame, weirdly
-df.loc[:,"z"] *= -1
-
-# Convert pixel coords to integer for simplicity
-df.loc[:,'X'] = df.loc[:,'X'].astype(int)
-df.loc[:,'Y'] = df.loc[:,'Y'].astype(int)
 
 # Merge stacked data
 df = merge_stacks(df)

@@ -9,10 +9,26 @@ sys.path.append(str(Path(__file__).parent.parent/'modules'))
 # Local ROI utilities
 from roi_utils import import_stereo_roi
 
+def swap_columns(df, c1, c2):
+    df.loc[:,"__"] = df.loc[:,c2]
+    df.loc[:,c2] = df.loc[:,c1]
+    df.loc[:,c1] = df.loc[:,"__"]
+    return df.drop("__", axis=1)
+
 def orientation_model(label):
     fn = Path(__file__).parent/'data'/(label+'.txt')
-    roi = next(import_stereo_roi(fn))
-    xyz = roi.loc[:,["x","y","z"]].values
+    df = next(import_stereo_roi(fn))
+
+    # x cross y = z
+    # y cross x = -z
+    # To invert z and maintain right-hand-rule, we swap x and y
+
+    # Swap x and y axes, and invert z
+    df = swap_columns(df,'x','y')
+    df = swap_columns(df,'xe','ye')
+    df.loc[:,"z"] *= -1
+
+    xyz = df.loc[:,["x","y","z"]].values
     return Orientation(xyz)
 
 def strike_dip(dip, azimuth):
