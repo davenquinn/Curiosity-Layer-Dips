@@ -92,7 +92,7 @@ class StereonetComponent extends Component
         opacity = 0.2
       if opacity < 0.05
         opacity = 0.05
-      fill = "rgba(255,10,10,0.5)"
+      fill = "rgba(0,197,255,0.5)"
       #else
       #  el.attr 'stroke-dasharray', '4,2'
       el.attr 'fill', fill

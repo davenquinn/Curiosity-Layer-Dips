@@ -1,10 +1,9 @@
-roi=roi-plots/.cache/roi-data.parquet
-tracker=output/.date
+roi_mappings=output/.date
 
 all: install graphics
 
 # Don't ask me why `make` is so dumb
-.PHONY: mappings traces graphics roi_data
+.PHONY: mappings traces graphics roi-plot-data reset
 
 sol-plots/mappings:
 traces/mappings:
@@ -20,17 +19,20 @@ mappings: sol-plots/mappings
 traces: traces/mappings
 	./traces/extract-shapes.py $^
 
-$(roi): roi-plots/create-roi-dataframe.py
+roi_data=output/roi-data.parquet
+$(roi_data): roi-plots/create-roi-dataframe.py
 	mkdir -p $(dir $@)
 	./$^ $@
 
-roi_data: $(roi)
-
-roi_plots: roi-plots/process-roi-data.py $(roi) output/roi-plots
-	./$^
-
-$(tracker): mappings traces roi_plots
+roi_models=output/roi-models/.run-date
+$(roi_models): roi-plots/process-roi-data.py $(roi_data)
+	mkdir -p $(dir $@)
+	./$^ $(dir $@)
 	date > $@
 
-graphics: $(tracker)
+graphics: $(roi_models)
 	./deps/pdf-printer/bin/cli.js --spec-mode spec.js
+
+reset:
+	rm -f output/**/.run-date
+	rm -f roi-plots/.cache

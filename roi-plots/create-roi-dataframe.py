@@ -28,9 +28,12 @@ def find_xye(xyz):
     #assert pth.exists()
     return pth
 
-def get_params(xyz):
+def get_params(xyz, stack=None):
     sol_id = int(xyz.parent.name)
-    image_id = int(xyz.stem.split("_")[0])
+    if stack is not None:
+        image_id = "stack_"+str(stack)
+    else:
+        image_id = str(xyz.stem.split("_")[0])
     print(sol_id, image_id)
     return sol_id, image_id
 
@@ -38,9 +41,9 @@ def join_frames(coord_frames, error_frames):
     for coord, error in zip(coord_frames, error_frames):
         yield coord.join(error)
 
-def create_dataframe(xyz):
+def create_dataframe(xyz, stack=None):
     xye = find_xye(xyz)
-    sol_id, image_id = get_params(xyz)
+    sol_id, image_id = get_params(xyz, stack=stack)
 
     df0 = read_roi(xyz, "ID X Y x y z")
     df_c = None
@@ -70,9 +73,11 @@ xyz_files = data_dir.glob("**/*_xyz.txt")
 roi_list = []
 for xyz in xyz_files:
     # Skip stacked data for now
-    if xyz.stem.startswith("stacked"):
-        continue
-    roi_list += list(create_dataframe(xyz))
+    stacked = xyz.stem.startswith("stacked")
+    stack = None
+    if stacked:
+        stack = 1
+    roi_list += list(create_dataframe(xyz, stack=stack))
 
 df = concat(roi_list)
 df.set_index(['sol','image','roi'], inplace=True)
