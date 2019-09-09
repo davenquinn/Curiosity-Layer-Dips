@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from sys import argv
 from json import dump
-from pandas import read_parquet, concat
+from pandas import read_parquet
 from stat_models import basic_model, weighted_model, monte_carlo_model
 
 def get_parameters(val):
@@ -29,29 +29,6 @@ def dump_json(frame, filename):
 
 df = read_parquet(argv[1])
 outdir = argv[2]
-
-# Merge stacks
-
-stacked = (df.index
-    .get_level_values('image')
-    .str.startswith('stack'))
-
-# Make sure we don't get SettingWithCopyWarning
-df_stacked = df[stacked].copy()
-df_normal = df[~stacked]
-
-# Center stacks around mean on each axis
-# Normally this would be done within the Attitude model,
-# but doing it outside allows us to have simpler code.
-g = df_stacked.groupby(level=['sol','image','roi'])
-for ax in ['x','y','z']:
-    # Center each axis around mean
-    df_stacked.loc[:,ax] = g[ax].transform(lambda x: x-x.mean())
-
-df_stacked.reset_index(level=2, inplace=True)
-df_stacked.loc[:,'roi'] = 0
-df_stacked.set_index('roi', drop=True, inplace=True, append=True)
-df = concat([df_normal, df_stacked])
 
 groups = df.groupby(level=['sol', 'image', 'roi'])
 
