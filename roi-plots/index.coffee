@@ -11,7 +11,7 @@ import {Component} from 'react'
 import {findDOMNode, render} from 'react-dom'
 import {readFileSync} from 'fs'
 import './main.styl'
-import StereonetComponent from '../sol-plots/stereonet'
+import StereonetComponent from './stereonet'
 
 getData = (fn)->
   console.log fn
@@ -28,7 +28,17 @@ module.exports = (props)->
 
   h 'div.plots', data.map (d)->
     {key, values} = d
+
+    mainData = values.filter (d)->
+      return false if d.stacked
+      [h1,h2,h3] = d.hyperbolic_axes
+      return false if h1/h3 < 5
+      return true
+
+    stackedData = values.filter (d)->
+      return d.stacked
+
     h 'div.sol-plot', [
       h 'h2.sol', "Sol #{key}"
-      h StereonetComponent, {data: values, filterData: false}
+      h StereonetComponent, {data: mainData, stackedData, filterData: false}
     ]
