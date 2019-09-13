@@ -7,7 +7,6 @@ all: graphics
 # Don't ask me why `make` is so dumb
 .PHONY: mappings traces graphics roi-plot-data reset test
 
-sol-plots/mappings:
 traces/mappings:
 output/roi-plots:
 	mkdir -p $@
