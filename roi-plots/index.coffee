@@ -21,7 +21,7 @@ getData = (fn)->
     .key (d)->d.sol
     .entries attitudes
 
-module.exports = (props)->
+Plot = (props)->
   {type} = props
   type ?= 'no-errors'
   data = getData("../output/roi-plots/attitudes-#{type}.json")
@@ -42,3 +42,7 @@ module.exports = (props)->
       h 'h2.sol', "Sol #{key}"
       h StereonetComponent, {data: mainData, stackedData, filterData: false}
     ]
+
+Plot.propTypes = {}
+
+module.exports = Plot

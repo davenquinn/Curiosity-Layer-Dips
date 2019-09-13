@@ -36,7 +36,7 @@ output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
 test: output/slope-reconstruction.pdf
 
 graphics: $(roi_models)
-	./deps/pdf-printer/bin/cli.js --spec-mode spec.js
+	deps/pdf-printer/bin/cli.js --spec spec.js
 
 reset:
 	rm -f output/**/.run-date
