@@ -1,5 +1,7 @@
 roi_mappings=output/.date
 
+FIGMENT := $(shell command -v figment 2> /dev/null)
+
 all: graphics
 
 # Don't ask me why `make` is so dumb
@@ -12,6 +14,10 @@ output/roi-plots:
 
 install:
 	pip install -e deps/Attitude
+ifndef FIGMENT
+	npm install -g figment-ui
+	-nodenv rehash
+endif
 
 mappings: sol-plots/mappings
 	./sol-plots/create-mappings.py $^
@@ -36,7 +42,7 @@ output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
 test: output/slope-reconstruction.pdf
 
 graphics: $(roi_models)
-	deps/pdf-printer/bin/cli.js --spec spec.js
+	figment --spec spec.js
 
 reset:
 	rm -f output/**/.run-date

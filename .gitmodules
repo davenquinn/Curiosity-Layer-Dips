@@ -4,6 +4,3 @@
 [submodule "deps/subdivide"]
 	path = deps/subdivide
 	url = git://github.com/davenquinn/subdivide.git
-[submodule "deps/pdf-printer"]
-	path = deps/pdf-printer
-	url = git://github.com/davenquinn/pdf-printer.git
