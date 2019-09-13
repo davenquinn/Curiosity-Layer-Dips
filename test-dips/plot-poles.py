@@ -1,6 +1,6 @@
 import sys
 from matplotlib import pyplot as plt
-from attitude.display.polar import pole, uncertain_pole
+from attitude.display.polar import pole, pole_error, uncertain_pole
 from attitude import Orientation
 from pathlib import Path
 
@@ -16,8 +16,9 @@ def orientation_models():
         yield fn.stem, Orientation(xyz)
 
 def plot_pole(ax, o, *args, **kwargs):
+    sdr = o.strike_dip_rake()
     uncertain_pole(ax,
-        *o.strike_dip_rake(),
+        *sdr,
         *o.angular_errors(),
         *args, **kwargs)
 

@@ -24,6 +24,9 @@ mappings: sol-plots/mappings
 traces: traces/mappings
 	./traces/extract-shapes.py $^
 
+test-dips/mappings.json: test-dips/create-mappings.py
+	python $^ $@
+
 roi_data=output/roi-data.parquet
 $(roi_data): roi-plots/create-roi-dataframe.py
 	mkdir -p $(dir $@)
@@ -39,7 +42,7 @@ output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
 output/test-dips.pdf: test-dips/plot-poles.py
 	python $^ $@
 
-test: output/slope-reconstruction.pdf output/test-dips.pdf
+test: output/slope-reconstruction.pdf output/test-dips.pdf test-dips/mappings.json
 
 graphics: $(roi_models)
 	figment --spec spec.js

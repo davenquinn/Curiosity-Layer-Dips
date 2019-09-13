@@ -54,8 +54,8 @@ def __import_stereo_roi(xyz_path, xye_path=None, default_error=0.005):
         for coord, error in zip(df_xyz, df_xye):
             yield coord.join(error)
     except (FileNotFoundError, AssertionError) as err:
-        secho(str(err), fg='red')
-        secho(f"Setting error to {default_error} on all axes", dim=True)
+        secho(str(err), fg='red', err=True)
+        secho(f"Setting error to {default_error} on all axes", dim=True, err=True)
         for df in df_xyz:
             # Set error to a low symmetrical value
             df['xe'] = df['ye'] = df['ze'] = default_error
