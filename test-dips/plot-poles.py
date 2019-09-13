@@ -15,6 +15,12 @@ def orientation_models():
         xyz = df.loc[:,["x","y","z"]].values
         yield fn.stem, Orientation(xyz)
 
+def plot_pole(ax, o, *args, **kwargs):
+    uncertain_pole(ax,
+        *o.strike_dip_rake(),
+        *o.angular_errors(),
+        *args, **kwargs)
+
 fig = plt.figure()
 
 
@@ -27,8 +33,12 @@ ax.set_rticks([15,30,45,60])
 ax.grid()
 
 for name, o in orientation_models():
+    print(name)
     print(o)
-    pole(ax, *o.strike_dip(), marker='o', markersize=5, label=name)
+    if o.angular_errors()[0] == 0:
+        pole(ax, *o.strike_dip(), marker='o', markersize=5, label=name)
+    else:
+        plot_pole(ax, o, alpha=0.5, label=name)
 
 ax.grid()
 fig.legend()

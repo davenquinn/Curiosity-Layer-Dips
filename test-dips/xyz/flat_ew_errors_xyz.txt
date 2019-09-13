@@ -1,0 +1,18 @@
+; ENVI Output of ROIs (5.4) [Sun Aug 18 00:14:31 2019]
+; Number of ROIs: 20
+; File Dimension: 1328 x 1184
+; This file should have errors oriented along the EW axis for a flat plane
+;   ID     X    Y        x        y        z
+     1   942  648  -1  -1   0
+     2   943  648  -1  1   0
+     3   941  648  1  -1   0
+     4   945  649  1  1   0
+     5   945  649  10  0   0.03
+     6   945  649  -10  0   0.01
+     7   945  649  0  -1   0.05
+     8   945  649  0  -1   -0.05
+     9   945  649  0  1   -0.05
+     10   945  649  0  1   0.05
+     11   945  649  -10  0  -0.01
+     12   945  649  10  0.01   0.05
+
