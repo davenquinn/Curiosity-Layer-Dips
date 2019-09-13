@@ -36,9 +36,10 @@ $(roi_models): roi-plots/process-roi-data.py $(roi_data)
 	date > $@
 
 output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
+output/test-dips.pdf: test-dips/plot-poles.py
 	python $^ $@
 
-test: output/slope-reconstruction.pdf
+test: output/slope-reconstruction.pdf output/test-dips.pdf
 
 graphics: $(roi_models)
 	figment --spec spec.js
