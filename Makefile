@@ -13,6 +13,7 @@ output/roi-plots:
 
 install:
 	pip install -e deps/Attitude
+	npm install
 ifndef FIGMENT
 	npm install -g figment-ui
 	-nodenv rehash
