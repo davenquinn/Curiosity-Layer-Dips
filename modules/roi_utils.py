@@ -64,3 +64,4 @@ def __import_stereo_roi(xyz_path, xye_path=None, default_error=0.005):
 def import_stereo_roi(*args, **kwargs):
     for df in __import_stereo_roi(*args,**kwargs):
         yield site_frame_to_global(df)
+

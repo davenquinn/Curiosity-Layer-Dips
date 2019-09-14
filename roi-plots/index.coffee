@@ -24,7 +24,7 @@ getData = (fn)->
 Plot = (props)->
   {type} = props
   type ?= 'no-errors'
-  data = getData("../output/roi-plots/attitudes-#{type}.json")
+  data = getData("../output/roi-models/attitudes-#{type}.json")
 
   h 'div.plots', data.map (d)->
     {key, values} = d

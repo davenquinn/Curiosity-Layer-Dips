@@ -47,4 +47,4 @@ graphics: $(roi_models)
 
 reset:
 	rm -f output/**/.run-date
-	rm -f roi-plots/.cache
+	rm -f $(roi_data)
