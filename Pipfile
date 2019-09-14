@@ -1,0 +1,17 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+attitude = {editable = true,path = "./deps/Attitude"}
+subdivide = {editable = true,path = "./deps/subdivide"}
+
+[packages]
+numpy = "*"
+pandas = "*"
+fiona = "*"
+pyarrow = "*"
+
+[requires]
+python_version = "3.7"

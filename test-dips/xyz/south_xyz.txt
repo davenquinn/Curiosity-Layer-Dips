@@ -1,0 +1,88 @@
+; ENVI Output of ROIs (5.4) [Sun Aug 18 00:14:31 2019]
+; Number of ROIs: 20
+; File Dimension: 1328 x 1184
+;
+; ROI name: Region #1
+; ROI rgb value: {255, 0, 0}
+; ROI npts: 176
+;
+; ROI name: Region #2
+; ROI rgb value: {0, 255, 0}
+; ROI npts: 259
+;
+; ROI name: Region #3
+; ROI rgb value: {0, 0, 255}
+; ROI npts: 101
+;
+; ROI name: Region #4
+; ROI rgb value: {255, 255, 0}
+; ROI npts: 89
+;
+; ROI name: Region #5
+; ROI rgb value: {0, 255, 255}
+; ROI npts: 173
+;
+; ROI name: Region #6
+; ROI rgb value: {255, 0, 255}
+; ROI npts: 173
+;
+; ROI name: Region #7
+; ROI rgb value: {176, 48, 96}
+; ROI npts: 113
+;
+; ROI name: Region #8
+; ROI rgb value: {46, 139, 87}
+; ROI npts: 172
+;
+; ROI name: Region #9
+; ROI rgb value: {160, 32, 240}
+; ROI npts: 179
+;
+; ROI name: Region #10
+; ROI rgb value: {255, 127, 80}
+; ROI npts: 137
+;
+; ROI name: Region #11
+; ROI rgb value: {127, 255, 212}
+; ROI npts: 79
+;
+; ROI name: Region #12
+; ROI rgb value: {218, 112, 214}
+; ROI npts: 167
+;
+; ROI name: Region #13
+; ROI rgb value: {160, 82, 45}
+; ROI npts: 217
+;
+; ROI name: Region #14
+; ROI rgb value: {127, 255, 0}
+; ROI npts: 230
+;
+; ROI name: Region #15
+; ROI rgb value: {216, 191, 216}
+; ROI npts: 133
+;
+; ROI name: Region #16
+; ROI rgb value: {238, 0, 0}
+; ROI npts: 20
+;
+; ROI name: Region #17
+; ROI rgb value: {205, 0, 0}
+; ROI npts: 66
+;
+; ROI name: Region #18
+; ROI rgb value: {139, 0, 0}
+; ROI npts: 84
+;
+; ROI name: Region #19
+; ROI rgb value: {0, 238, 0}
+; ROI npts: 65
+;
+; ROI name: Region #20
+; ROI rgb value: {0, 205, 0}
+; ROI npts: 132
+;   ID     X    Y        B1        B2        B3
+     1   942  648  0  0   0
+     2   943  648  0  1   0
+     3   941  648  -1  0   1
+     4   945  649  -1  1   1

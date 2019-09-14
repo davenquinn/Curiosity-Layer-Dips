@@ -16,12 +16,19 @@ import {AzimuthLabels, DipLabels} from './graticule-labels'
 class StereonetComponent extends Component
   @defaultProps: {
     filterData: false
+    clipAngle: 20
+    margin: 20
+    size: 300
+    graticule: [30, 5]
   }
   render: ->
-    h 'svg.stereonet', {width: 340, height: 340}
+    {size, margin} = @props
+    v = size+2*margin
+    h 'svg.stereonet', {width: v, height: v}
 
   componentDidMount: ->
-    {data, stackedData, filterData} = @props
+    {data, stackedData, filterData,
+     clipAngle, graticule, margin, size} = @props
 
     if filterData
       data = data.filter (d)->
@@ -30,15 +37,15 @@ class StereonetComponent extends Component
 
     el = findDOMNode(@)
     innerSize = {
-      height: 300
-      width: 300
+      height: size
+      width: size
     }
 
     stereonet = Stereonet()
-      .size 300
-      .margin 20
-      .graticule 30, 5
-      .clipAngle 20
+      .size size
+      .margin @props.margin
+      .graticule(graticule...)
+      .clipAngle clipAngle
       .rectangular(innerSize)
 
     svg = d3.select(el)
@@ -47,7 +54,7 @@ class StereonetComponent extends Component
 
     stereonet
       .projection()
-      .translate([170,170])
+      .translate([innerSize.width/2+margin,innerSize.height/2+margin])
 
     svg.select '.neatline'
       .attr 'fill', 'transparent'
