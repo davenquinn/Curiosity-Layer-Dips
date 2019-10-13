@@ -2,13 +2,13 @@
 
 # Extract ROIs to pandas data frame
 
-import sys
+from sys import path, stdout
 from pathlib import Path
 from pandas import concat
 from json import dump
 
 # Add local modules to path
-sys.path.append(str(Path(__file__).absolute().parent.parent/'modules'))
+path.append(str(Path(__file__).absolute().parent.parent/'modules'))
 # Local ROI utilities
 from roi_dataframe import merge_stacks, create_dataframe
 from stat_models import monte_carlo_model
@@ -39,4 +39,4 @@ for ix,val in stacked.items():
         roi=ix,
         stacked=True))
 
-dump(arr, sys.stdout)
+dump(arr, stdout)
