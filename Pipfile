@@ -5,13 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 attitude = {editable = true,path = "./deps/Attitude"}
-subdivide = {editable = true,path = "./deps/subdivide"}
 
 [packages]
 numpy = "*"
 pandas = "*"
 fiona = "*"
 pyarrow = "*"
+subdivide = "*"
 
 [requires]
 python_version = "3.7"
