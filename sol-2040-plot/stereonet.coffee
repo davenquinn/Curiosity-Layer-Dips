@@ -110,10 +110,15 @@ class StereonetComponent extends Component
       .alongLine([width+margin,margin], [width+margin, height+margin])
       .render svg.append("g.azimuth-labels")
 
+    console.log "Rendering dip labels"
     dipLabels = new DipLabels stereonet
 
+    v = stereonet.projection().rotate()
+    coords = {type: "LineString", coordinates: [[-15,90], [-15,90-28]]}
+
     dipLabels
-      .alongLine([margin,height+margin], [width+margin, height+margin])
+      #.alongLine([margin,height+margin], [width+margin, height+margin])
+      .alongGeoPath(coords)
       .render svg.append("g.dip-labels")
 
 

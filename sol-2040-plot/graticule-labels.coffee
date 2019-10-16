@@ -27,6 +27,13 @@ class GraticuleLabels
     @shape = ShapeInfo.line( startPos..., endPos...)
     return @
 
+  alongGeoPath: (obj)->
+    pth = d3.geoPath(@stereonet.projection())
+    d = pth(obj)
+    console.log d
+    @shape = ShapeInfo.path(d)
+    return @
+
   textOffset: (offs)->
     return @_offs unless offs?
     @_offs = offs
