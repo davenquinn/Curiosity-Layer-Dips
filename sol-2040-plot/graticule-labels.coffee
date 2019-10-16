@@ -1,7 +1,5 @@
 d3 = require 'd3'
-import {Shapes, Intersection} from 'kld-intersections'
-import {PathParser} from 'kld-path-parser'
-import PathHandler from '../node_modules/kld-intersections/lib/PathHandler.js'
+import {ShapeInfo, Intersection} from 'kld-intersections'
 
 index = {lon: 0, lat: 1}
 
@@ -26,7 +24,7 @@ class GraticuleLabels
   constructor: (@stereonet)->
   format: (d)->"#{d.value}°"
   alongLine: (startPos, endPos)->
-    @shape = Shapes.line( startPos..., endPos...)
+    @shape = ShapeInfo.line( startPos..., endPos...)
     return @
 
   textOffset: (offs)->
@@ -48,15 +46,10 @@ class GraticuleLabels
     for coords in values
       obj = {type: 'LineString', coordinates: coords}
       d = pth(obj)
-      parser = new PathParser()
-      handler = new PathHandler()
-      parser.setHandler(handler)
-      try
-        parser.parseData(d)
-      catch
-        continue
-      path = Shapes.path(handler.shapes)
+      continue unless d?
+      path = ShapeInfo.path(d)
       {points} = Intersection.intersect(path, @shape)
+      continue unless points?
       for point in points
         point.value = coords[0][ix]
         console.log point
@@ -65,7 +58,10 @@ class GraticuleLabels
 
   render: (el)->
     @container = el.append 'g.labels'
-    sel = @container.appendMany 'g.label', @getIntersections()
+    console.log @container
+    v = @getIntersections()
+    console.log v
+    sel = @container.appendMany 'g.label', v
       .translate ({x,y})-> [x, y]
       .attrs {
         'text-anchor': 'middle'

@@ -10,7 +10,6 @@
     "d3-selection-multi": "^1.0.1",
     "figment-ui": "^0.1.0",
     "kld-intersections": "^0.6.0",
-    "kld-path-parser": "^0.2.1",
     "react-hyperscript": "^3.2.0"
   }
 }

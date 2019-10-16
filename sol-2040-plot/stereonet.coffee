@@ -10,7 +10,7 @@ import {nest} from 'd3-collection'
 import {Component} from 'react'
 import {findDOMNode} from 'react-dom'
 import './main.styl'
-import {AzimuthLabels, DipLabels} from '../roi-plots/graticule-labels'
+import {AzimuthLabels, DipLabels} from './graticule-labels'
 
 class StereonetComponent extends Component
   @defaultProps: {
@@ -46,6 +46,9 @@ class StereonetComponent extends Component
       .clipAngle clipAngle
       .rectangular(innerSize)
 
+    stereonet.rotate([157+180,-76, 90])
+    stereonet.scale(sz*4)
+
     svg = d3.select(el)
       .append 'g'
     svg.call stereonet
@@ -78,7 +81,6 @@ class StereonetComponent extends Component
       c = chroma(d.color)
       fill = c.alpha(0.3).css()
       #else
-      #  el.attr 'stroke-dasharray', '4,2'
       el.attr 'fill', fill
       el.attr 'stroke', c.css()
 
@@ -93,10 +95,29 @@ class StereonetComponent extends Component
         opacity = 0.2
       if opacity < 0.05
         opacity = 0.05
-      fill = "rgba(0,197,255,0.5)"
+      fill = "rgba(0,0,0,0.8)"
       #else
       #  el.attr 'stroke-dasharray', '4,2'
-      el.attr 'fill', fill
+      el.attr 'stroke', fill
+      el.style 'stroke-width', '3px'
+      el.attr 'stroke-dasharray', '8,4'
+      el.attr 'fill', "rgba(0,0,0,0.2)"
+
+    console.log "Rendering azimuth labels"
+    azLabels = new AzimuthLabels stereonet
+
+    azLabels
+      .alongLine([width+margin,margin], [width+margin, height+margin])
+      .render svg.append("g.azimuth-labels")
+
+    dipLabels = new DipLabels stereonet
+
+    dipLabels
+      .alongLine([margin,height+margin], [width+margin, height+margin])
+      .render svg.append("g.dip-labels")
+
+
+
 
 export default StereonetComponent
 
