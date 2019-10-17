@@ -16,7 +16,7 @@ class StereonetComponent extends Component
   @defaultProps: {
     filterData: false
     clipAngle: 20
-    margin: 40
+    margin: 20
     width: 300,
     height: 300,
     graticule: [30, 5]
@@ -74,12 +74,14 @@ class StereonetComponent extends Component
 
     stereonet.draw()
 
+    console.log ell
+
     ell.each (d)->
+      console.log d.color
       el = d3.select(@).select('.error')
-      fill = 'transparent'
       #if d.min_angular_error < 10
       c = chroma(d.color)
-      fill = c.alpha(0.3).css()
+      fill = c.alpha(0.1).css()
       #else
       el.attr 'fill', fill
       el.attr 'stroke', c.css()
@@ -101,7 +103,7 @@ class StereonetComponent extends Component
       el.attr 'stroke', fill
       el.style 'stroke-width', '3px'
       el.attr 'stroke-dasharray', '8,4'
-      el.attr 'fill', "rgba(0,0,0,0.2)"
+      el.attr 'fill', "rgba(0,0,0,0.1)"
 
     console.log "Rendering azimuth labels"
     azLabels = new AzimuthLabels stereonet
@@ -128,7 +130,7 @@ class StereonetComponent extends Component
     dipLabels = new DipLabels stereonet
 
     v = stereonet.projection().rotate()
-    coords = {type: "LineString", coordinates: [[-15,90], [-15,90-32]]}
+    coords = {type: "LineString", coordinates: [[-15,90], [-15,90-24]]}
 
     dipLabels
       #.alongLine([margin,height+margin], [width+margin, height+margin])

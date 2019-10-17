@@ -1,6 +1,7 @@
 from json import dump
 
 def create_mapping(ix, val, stacked=False):
+    import IPython; IPython.embed(); raise
     return val.to_mapping(
         centered_array=None,
         sol=ix[0],

@@ -25,13 +25,13 @@ df_stack = merge_stacks(df, groupby='roi')
 mc = lambda x: monte_carlo_model(x, scale_errors=0.364)
 
 index = {
-    11: 'red',
-    2: 'pink',
-    10: 'orange',
-    1: 'green',
-    9: 'blue',
-    12: 'violet',
-    7: 'black'
+    11: '#ff0608',
+    2: '#fe999a',
+    10: '#ecad15',
+    1: '#c0ddc6',
+    9: '#49bdee',
+    12: '#6279a3',
+    7: '#2b3e62'
 }
 
 order = [11,2,10,1,9,12,7]
@@ -44,18 +44,17 @@ for ix,val in orientations.items():
         continue
     arr.append(val.to_mapping(
         centered_array=None,
-        roi=ix,
+        roi=key,
         index=order.index(key),
         color=index[key],
         stacked=False))
 
-arr.sort(key=lambda x: -x['index'])
+arr.sort(key=lambda x: x['index'])
 
 stacked = df_stack.groupby(level='roi').apply(mc)
 for ix,val in stacked.items():
     arr.append(val.to_mapping(
         centered_array=None,
-        roi=ix,
         color='#888888',
         stacked=True))
 

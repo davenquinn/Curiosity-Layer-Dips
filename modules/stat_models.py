@@ -1,6 +1,11 @@
 import numpy as N
 from attitude.orientation import Orientation
 
+class ExtendedOrientation(Orientation):
+    def __init__(self, xyz, xye, **kwargs):
+        self.average_error = N.mean(xye, axis=0)
+        Orientation.__init__(self, xyz, **kwargs)
+
 def get_values(roi):
     xyz = roi.loc[:,["x","y","z"]].values
     xye = roi.loc[:,["xe","ye","ze"]].values
@@ -11,7 +16,7 @@ def basic_model(roi):
     Orientation model that incorporates data without any accounting for errors.
     """
     xyz, xye = get_values(roi)
-    return Orientation(xyz)
+    return ExtendedOrientation(xyz, xye)
 
 def weighted_model(roi):
     """
@@ -21,7 +26,7 @@ def weighted_model(roi):
     xym = xye.mean(axis=0)
     # Normalize error so the min error is weighted 1
     norm_err = xym/xym.min()
-    return Orientation(xyz, weights=1/norm_err)
+    return ExtendedOrientation(xyz, xye, weights=1/norm_err)
 
 def monte_carlo_model(roi, n=1000, scale_errors=1):
     xyz,xye = get_values(roi)
@@ -33,4 +38,4 @@ def monte_carlo_model(roi, n=1000, scale_errors=1):
     fuzz = N.random.randn(*xyzmc.shape)
     # Apply the scaled error
     xyzmc += xyemc*fuzz
-    return Orientation(xyzmc)
+    return ExtendedOrientation(xyzmc, xye)

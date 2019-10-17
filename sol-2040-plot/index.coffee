@@ -14,10 +14,11 @@ class PlotComponent extends Component
     return null unless data?
     mainData = data.filter (d)->not d.stacked
     stackedData = data.filter (d)->d.stacked
+
     h StereonetComponent, {
       data: mainData,
       stackedData, filterData: false
-      width: 400
+      width: 450
       height: 300
       graticule: [15, 5]
     }
