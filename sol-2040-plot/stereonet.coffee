@@ -16,7 +16,7 @@ class StereonetComponent extends Component
   @defaultProps: {
     filterData: false
     clipAngle: 20
-    margin: 20
+    margin: 40
     width: 300,
     height: 300,
     graticule: [30, 5]
@@ -106,23 +106,37 @@ class StereonetComponent extends Component
     console.log "Rendering azimuth labels"
     azLabels = new AzimuthLabels stereonet
 
+    azContainer = svg.append("g.azimuth-labels")
+
     azLabels
       .alongLine([width+margin,margin], [width+margin, height+margin])
-      .render svg.append("g.azimuth-labels")
+      .render azContainer
+      .selectAll('text')
+      .attr 'transform', 'rotate(90) translate(0 -3)'
+      .attr 'alignment-baseline', 'center'
+
+    azLabels = new AzimuthLabels stereonet
+    azLabels
+      .alongLine([margin,margin], [width+margin, margin])
+      .render azContainer
+      .selectAll('text')
+      .attr 'transform', 'translate(0 -3)'
+      .attr 'alignment-baseline', 'center'
+
 
     console.log "Rendering dip labels"
     dipLabels = new DipLabels stereonet
 
     v = stereonet.projection().rotate()
-    coords = {type: "LineString", coordinates: [[-15,90], [-15,90-28]]}
+    coords = {type: "LineString", coordinates: [[-15,90], [-15,90-32]]}
 
     dipLabels
       #.alongLine([margin,height+margin], [width+margin, height+margin])
       .alongGeoPath(coords)
       .render svg.append("g.dip-labels")
-
-
-
+      .selectAll('text')
+      .attr "transform", "rotate(-52)"
+      .attr 'alignment-baseline', 'middle'
 
 export default StereonetComponent
 

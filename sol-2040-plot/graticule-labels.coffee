@@ -34,6 +34,8 @@ class GraticuleLabels
     @shape = ShapeInfo.path(d)
     return @
 
+  alongPath: (coords)->
+
   textOffset: (offs)->
     return @_offs unless offs?
     @_offs = offs
