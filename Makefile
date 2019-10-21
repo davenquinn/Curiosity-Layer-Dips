@@ -52,3 +52,6 @@ graphics: $(sol_2040_models) $(roi_models)
 reset:
 	rm -f output/**/.run-date
 	rm -f $(roi_data)
+
+output/dip-magnitude.pdf: dip-magintude/create-plot.py $(roi_data)
+	pipenv run python $^ $@
