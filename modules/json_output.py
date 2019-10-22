@@ -1,9 +1,11 @@
 from json import dump
 
 def create_mapping(ix, val, stacked=False):
-    import IPython; IPython.embed(); raise
     return val.to_mapping(
         centered_array=None,
+        axis_error=list(val.average_error),
+        axis_length=list(val.delta_xyz),
+        trace_length=val.trace_length,
         sol=ix[0],
         image=ix[1],
         roi=ix[2],

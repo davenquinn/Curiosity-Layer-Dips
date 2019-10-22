@@ -76,7 +76,15 @@ class StereonetComponent extends Component
     ell.each (d)->
       el = d3.select(@).select('.error')
       fill = 'transparent'
+      console.log(d)
       #if d.min_angular_error < 10
+      x_ratio = d.axis_length[0]/d.axis_error[0]
+      y_ratio = d.axis_length[1]/d.axis_error[1]
+      console.log x_ratio, y_ratio
+      if x_ratio < 3 or y_ratio < 3
+        d3.select(@).remove()
+        return
+
       opacity = 1/d.min_angular_error/d.min_angular_error
       if opacity > 0.2
         opacity = 0.2
