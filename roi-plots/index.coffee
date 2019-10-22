@@ -21,6 +21,13 @@ getData = (fn)->
     .key (d)->d.sol
     .entries attitudes
 
+thresholdFilter = (threshold)-> (d)->
+  # Remove data with a shorter axis length to err ratio
+  x_ratio = d.axis_length[0]/d.axis_error[0]
+  y_ratio = d.axis_length[1]/d.axis_error[1]
+  console.log x_ratio, y_ratio
+  return x_ratio > threshold and y_ratio > threshold
+
 Plot = (props)->
   {type} = props
   type ?= 'no-errors'
@@ -29,18 +36,17 @@ Plot = (props)->
   h 'div.plots', data.map (d)->
     {key, values} = d
 
+    filter = thresholdFilter(3)
     mainData = values.filter (d)->
       return false if d.stacked
-      [h1,h2,h3] = d.hyperbolic_axes
-      return false if h1/h3 < 5
-      return true
+      return filter(d)
 
     stackedData = values.filter (d)->
       return d.stacked
 
     h 'div.sol-plot', [
       h 'h2.sol', "Sol #{key}"
-      h StereonetComponent, {data: mainData, stackedData, filterData: false}
+      h StereonetComponent, {data: mainData, stackedData}
     ]
 
 Plot.propTypes = {}

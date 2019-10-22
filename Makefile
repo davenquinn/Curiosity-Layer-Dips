@@ -36,15 +36,22 @@ $(roi_models): roi-plots/process-roi-data.py $(roi_data)
 	pipenv run python $^ $(dir $@)
 	date > $@
 
+sol_2040_models=sol-2040-plot/attitude-data.json
+$(sol_2040_models): sol-2040-plot/parse-roi-data.py
+	pipenv run python $^ > $@
+
 output/slope-reconstruction.pdf: slope-reconstruction/plot-poles.py
 output/test-dips.pdf: test-dips/plot-poles.py
 	pipenv run python $^ $@
 
 test: output/slope-reconstruction.pdf output/test-dips.pdf test-dips/mappings.json
 
-graphics: $(roi_models)
+graphics: $(sol_2040_models) $(roi_models)
 	figment --spec spec.js
 
 reset:
 	rm -f output/**/.run-date
 	rm -f $(roi_data)
+
+output/dip-magnitude.pdf: dip-magintude/create-plot.py $(roi_data)
+	pipenv run python $^ $@
