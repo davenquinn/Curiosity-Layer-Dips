@@ -15,7 +15,6 @@ import {AzimuthLabels, DipLabels} from './graticule-labels'
 
 class StereonetComponent extends Component
   @defaultProps: {
-    filterData: false
     clipAngle: 20
     margin: 20
     size: 300
@@ -27,13 +26,9 @@ class StereonetComponent extends Component
     h 'svg.stereonet', {width: v, height: v}
 
   componentDidMount: ->
-    {data, stackedData, filterData,
-     clipAngle, graticule, margin, size} = @props
-
-    if filterData
-      data = data.filter (d)->
-        v = d.ratio_1 > 3 and d.ratio_2 > 3
-        v
+    {data, stackedData,
+     clipAngle, graticule,
+     margin, size} = @props
 
     el = findDOMNode(@)
     innerSize = {
@@ -76,21 +71,13 @@ class StereonetComponent extends Component
     ell.each (d)->
       el = d3.select(@).select('.error')
       fill = 'transparent'
-      console.log(d)
       #if d.min_angular_error < 10
-      x_ratio = d.axis_length[0]/d.axis_error[0]
-      y_ratio = d.axis_length[1]/d.axis_error[1]
-      console.log x_ratio, y_ratio
-      if x_ratio < 3 or y_ratio < 3
-        d3.select(@).remove()
-        return
 
       opacity = 1/d.min_angular_error/d.min_angular_error
       if opacity > 0.2
         opacity = 0.2
       if opacity < 0.05
         opacity = 0.05
-      console.log opacity
       fill = "rgba(80,80,80,#{opacity})"
       #else
       #  el.attr 'stroke-dasharray', '4,2'

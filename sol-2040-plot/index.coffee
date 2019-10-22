@@ -17,7 +17,7 @@ class PlotComponent extends Component
 
     h StereonetComponent, {
       data: mainData,
-      stackedData, filterData: false
+      stackedData
       width: 450
       height: 300
       graticule: [15, 5]
