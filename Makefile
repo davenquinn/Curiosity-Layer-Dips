@@ -2,10 +2,10 @@ roi_mappings=output/.date
 
 FIGMENT := $(shell command -v figment 2> /dev/null)
 
-all: graphics
+all: graphics final-plot
 
 # Don't ask me why `make` is so dumb
-.PHONY: mappings traces graphics roi-plot-data reset test
+.PHONY: mappings traces graphics roi-plot-data reset test final-plot
 
 traces/mappings:
 output/roi-plots:
@@ -55,3 +55,8 @@ reset:
 
 output/dip-magnitude.pdf: dip-magintude/create-plot.py $(roi_data)
 	pipenv run python $^ $@
+
+output/figure-8-ellipses.pdf: final-plot/plot-ellipses.py
+	pipenv run python $^ $@
+
+final-plot: output/figure-8-ellipses.pdf

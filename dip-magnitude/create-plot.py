@@ -11,7 +11,5 @@ from stat_models import basic_model, weighted_model, monte_carlo_model
 df = read_parquet(argv[1])
 outfile = argv[2]
 
-import IPython; IPython.embed(); raise
-
 groups = df.groupby(level=['sol', 'image', 'roi'])
 res = groups.apply(basic_model)
