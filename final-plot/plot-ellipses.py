@@ -36,15 +36,16 @@ for ax in axes:
 black = (0,0,0)
 
 def plot_ellipses(ax, row, color, opacity_scale=1):
-    orientation = row['plane']
-    o = opacity(orientation)
-    e = o+0.05
-    pole_error(
-        ax,
-        orientation,
-        fc=(*color, o*opacity_scale),
-        ec=(*color, e*opacity_scale),
-        linewidth=0.5)
+    for i, row in df.iterrows():
+        orientation = row['plane']
+        o = opacity(orientation)
+        e = o+0.05
+        pole_error(
+            ax,
+            orientation,
+            fc=(*color, o*opacity_scale),
+            ec=(*color, e*opacity_scale),
+            linewidth=0.5)
 
 def create_plane(row):
     """Function to create reconstructed planes"""
@@ -65,8 +66,7 @@ def opacity(orientation):
     area = N.pi*N.prod(errors/2)
     return N.interp(area, (0.001, 0.01), (0.05, 0.005))
 
-for i, row in df.iterrows():
-    plot_ellipses(axes[0], row, black)
+plot_ellipses(axes[0], df, black)
 
 grouped = df.groupby("Geological Classification")
 color_ix = dict(IO="black",IOC="red",B="green",OL="blue")
@@ -74,8 +74,7 @@ group_ix = dict(IO=0,IOC=1,B=2,OL=3)
 
 for name, group in grouped:
     color = spectra.html(color_ix[name])
-    for i, row in group.iterrows():
-        plot_ellipses(axes[1], row, color.rgb)
+    plot_ellipses(axes[1], group, color.rgb)
 
 plt.tight_layout()
 fig.savefig(argv[1], bbox_inches='tight')
@@ -96,8 +95,7 @@ for ax in axes:
 for name, group in grouped:
     color = spectra.html(color_ix[name])
     groupix = group_ix[name]
-    for i, row in group.iterrows():
-        plot_ellipses(axes[groupix], row, color.rgb, opacity_scale=2)
+    plot_ellipses(axes[groupix], group, color.rgb, opacity_scale=2)
 
 plt.tight_layout()
 fig.savefig(argv[2], bbox_inches='tight')
