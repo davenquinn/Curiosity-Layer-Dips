@@ -12,7 +12,7 @@ output/roi-plots:
 	mkdir -p $@
 
 install:
-	pipenv install
+	pipenv install --dev
 	npm install
 ifndef FIGMENT
 	npm install -g figment-ui
