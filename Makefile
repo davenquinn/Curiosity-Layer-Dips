@@ -5,14 +5,14 @@ FIGMENT := $(shell command -v figment 2> /dev/null)
 all: graphics
 
 # Don't ask me why `make` is so dumb
-.PHONY: mappings traces graphics roi-plot-data reset test
+.PHONY: mappings traces graphics roi-plot-data reset test final-plot
 
 traces/mappings:
 output/roi-plots:
 	mkdir -p $@
 
 install:
-	pipenv install
+	pipenv install --dev
 	npm install
 ifndef FIGMENT
 	npm install -g figment-ui
@@ -55,3 +55,9 @@ reset:
 
 output/dip-magnitude.pdf: dip-magintude/create-plot.py $(roi_data)
 	pipenv run python $^ $@
+
+final-plot: final-plot/plot-ellipses.py
+	pipenv run python $^ \
+		output/figure-8-ellipses.pdf \
+		output/geological-class-ellipses.pdf
+

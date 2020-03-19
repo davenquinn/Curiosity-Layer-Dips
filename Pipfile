@@ -12,6 +12,10 @@ pandas = "*"
 fiona = "*"
 pyarrow = "*"
 subdivide = "*"
+xlrd = "*"
+ipython = "*"
+mplstereonet = "*"
+spectra = "*"
 
 [requires]
 python_version = "3.7"
