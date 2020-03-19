@@ -14,10 +14,14 @@ from itertools import chain
 path.append(str(Path(__file__).absolute().parent.parent/'modules'))
 
 data_file = str(Path(__file__).parent/"all_PCA_dips_montecarlo_BP_singlerun_three_std_final.xlsx")
-outfile = argv[1]
-outfile2 = argv[2]
 
 df = read_excel(data_file)
+
+def setup_axis(ax):
+    ax.set_theta_zero_location('N')
+    ax.set_theta_direction(-1)
+    ax.set_rlim([0,25])
+    ax.grid(dashes=(2,2))
 
 # Create figure
 fig, axes = plt.subplots(
@@ -26,25 +30,21 @@ fig, axes = plt.subplots(
     figsize=(12, 6),
     subplot_kw=dict(projection='polar'))
 
-fig2, axes2 = plt.subplots(
-    nrows=2,
-    ncols=2,
-    figsize=(6, 6),
-    subplot_kw=dict(projection='polar'))
-axes2 = axes2.reshape(4)
-
-for ax in chain(axes,axes2):
-    ax.set_theta_zero_location('N')
-    ax.set_theta_direction(-1)
-    ax.set_rlim([0,25])
-    ax.grid(dashes=(2,2))
-
-for ax in axes2:
-    ax.set_xticklabels([])
-    ax.set_yticklabels([])
-
+for ax in axes:
+    setup_axis(ax)
 
 black = (0,0,0)
+
+def plot_ellipses(ax, row, color, opacity_scale=1):
+    orientation = row['plane']
+    o = opacity(orientation)
+    e = o+0.05
+    pole_error(
+        ax,
+        orientation,
+        fc=(*color, o*opacity_scale),
+        ec=(*color, e*opacity_scale),
+        linewidth=0.5)
 
 def create_plane(row):
     """Function to create reconstructed planes"""
@@ -66,16 +66,7 @@ def opacity(orientation):
     return N.interp(area, (0.001, 0.01), (0.05, 0.005))
 
 for i, row in df.iterrows():
-    orientation = row['plane']
-    o = opacity(orientation)
-    e = o+0.05
-    pole_error(
-        axes[0],
-        orientation,
-        color='black',
-        fc=(*black, o),
-        ec=(*black, e),
-        linewidth=0.5)
+    plot_ellipses(axes[0], row, black)
 
 grouped = df.groupby("Geological Classification")
 color_ix = dict(IO="black",IOC="red",B="green",OL="blue")
@@ -84,34 +75,30 @@ group_ix = dict(IO=0,IOC=1,B=2,OL=3)
 for name, group in grouped:
     color = spectra.html(color_ix[name])
     for i, row in group.iterrows():
-        orientation = row['plane']
-        o = opacity(orientation)
-        e = o+0.05
-        pole_error(
-            axes[1],
-            orientation,
-            fc=(*color.rgb, o),
-            ec=(*color.rgb, e),
-            linewidth=0.5)
-        # Plot to four-up figure
-        groupix = group_ix[name]
-        pole_error(
-            axes2[groupix],
-            orientation,
-            fc=(*color.rgb, o*2),
-            ec=(*color.rgb, o*2+0.1),
-            linewidth=0.5)
+        plot_ellipses(axes[1], row, color.rgb)
 
 plt.tight_layout()
+fig.savefig(argv[1], bbox_inches='tight')
 
-# fig.legend(handles=[
-    # patches.Patch(color='black', label='Bedding'),
-    # patches.Patch(color='blue', label='Cross-bedding')
-# ], frameon=False)
+fig, axes = plt.subplots(
+    nrows=2,
+    ncols=2,
+    figsize=(6, 6),
+    subplot_kw=dict(projection='polar'))
+axes = axes.reshape(4)
 
-#ax.set_rticks([15,30,45,60])
-#ax.grid(zorder=12)
-#ax.set_axisbelow(False)
+# Axis setup
+for ax in axes:
+    setup_axis(ax)
+    ax.set_xticklabels([])
+    ax.set_yticklabels([])
 
-fig.savefig(outfile, bbox_inches='tight')
-fig2.savefig(outfile2, bbox_inches='tight')
+for name, group in grouped:
+    color = spectra.html(color_ix[name])
+    groupix = group_ix[name]
+    for i, row in group.iterrows():
+        plot_ellipses(axes[groupix], row, color.rgb, opacity_scale=2)
+
+plt.tight_layout()
+fig.savefig(argv[2], bbox_inches='tight')
+
