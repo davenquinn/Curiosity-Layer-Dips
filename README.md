@@ -3,6 +3,11 @@
 This repository contains codes to analyze layer dips
 extracted from Curiosity rover Mastcam images.
 
+These scripts ultimately produced plots for the paper
+[Stein et al., Regional Structural Orientation of the Mount Sharp Group Revealed
+by In Situ Dip Measurements and Stratigraphic Correlations on the
+Vera Rubin Ridge, JGR-Planets 2020](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2019JE006298).
+
 ## Running the code
 
 The code in this repository is split into several parts, each in a
